@@ -14,10 +14,11 @@ services:
       - 7077:7077
     environment:
       - INIT_DAEMON_STEP=setup_spark
+      - SPARK_MASTER_HOST=spark.master
 
   # -----[ worker_01 ]------------------------------------------------------------------------------
   worker_01:
-    image: bde2020/spark-worker
+    image: flegsi101/spark-worker
     container_name: spark_worker_01
     restart: always
     depends_on:
@@ -28,11 +29,12 @@ services:
     ports:
       - 8081:8081
     environment:
-      - "SPARK_MASTER=spark://master:7077"
+      - SPARK_MASTER=spark://master:7077
+      - SPARK_WORKER_HOST=spark.worker.01
 
   # -----[ worker_02 ]------------------------------------------------------------------------------
   worker_02:
-    image: bde2020/spark-worker
+    image: flegsi101/spark-worker
     container_name: spark_worker_02
     restart: always
     depends_on:
@@ -45,6 +47,7 @@ services:
     environment:
       - SPARK_MASTER=spark://master:7077
       - SPARK_WORKER_WEBUI_PORT=8082
+      - SPARK_WORKER_HOST=spark.worker.02
 
 networks:
   datalake:
