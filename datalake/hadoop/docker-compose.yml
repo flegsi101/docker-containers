@@ -1,0 +1,95 @@
+version: "3"
+
+services:
+  # -----[ namende ]--------------------------------------------------------------------------------
+  namenode:
+    image: bde2020/hadoop-namenode
+    container_name: namenode
+    restart: always
+    networks:
+      - datalake
+    ports:
+      - 9870:9870
+      - 9000:9000
+    volumes:
+      - namenode:/hadoop/dfs/namenode
+    environment:
+      - CLUSTER_NAME=datalake
+    env_file:
+      - ./hadoop.env
+
+  # -----[ datanode_01 ]----------------------------------------------------------------------------
+  datanode_01:
+    image: bde2020/hadoop-datanode
+    container_name: datanode_01
+    restart: always
+    networks:
+      - datalake
+    volumes:
+      - datanode_01:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+
+  # -----[ datanode_02 ]----------------------------------------------------------------------------
+  datanode_02:
+    image: bde2020/hadoop-datanode
+    container_name: datanode_02
+    restart: always
+    networks:
+      - datalake
+    volumes:
+      - datanode_02:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+
+  # -----[ resourcemanager ]------------------------------------------------------------------------
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager
+    container_name: resourcemanager
+    restart: always
+    networks:
+      - datalake
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode_01:9864 datanode_02:9864"
+    env_file:
+      - ./hadoop.env
+
+  # -----[ nodemanager ]----------------------------------------------------------------------------
+  nodemanager:
+    image: bde2020/hadoop-nodemanager
+    container_name: nodemanager
+    restart: always
+    networks:
+      - datalake
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode_01:9864 datanode_02:9864 resourcemanager:8088"
+    env_file:
+      - ./hadoop.env
+
+  # -----[ historyserver ]--------------------------------------------------------------------------
+  historyserver:
+    image: bde2020/hadoop-historyserver
+    container_name: historyserver
+    restart: always
+    networks:
+      - datalake
+    volumes:
+      - hadoop_historyserver:/hadoop/yarn/timeline
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode_01:9864 datanode_02:9864 resourcemanager:8088"
+    env_file:
+      - ./hadoop.env
+
+volumes:
+  namenode:
+  datanode_01:
+  datanode_02:
+  hadoop_historyserver:
+
+networks:
+  datalake:
+    external: true

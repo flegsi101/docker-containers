@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  # -----[ master ]---------------------------------------------------------------------------------
+  master:
+    image: bde2020/spark-master
+    container_name: spark_master
+    restart: always
+    hostname: spark.master
+    networks:
+      - datalake
+    ports:
+      - 8080:8080
+      - 7077:7077
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
+
+  # -----[ worker_01 ]------------------------------------------------------------------------------
+  worker_01:
+    image: bde2020/spark-worker
+    container_name: spark_worker_01
+    restart: always
+    depends_on:
+      - master
+    hostname: spark.worker.01
+    networks:
+      - datalake
+    ports:
+      - 8081:8081
+    environment:
+      - "SPARK_MASTER=spark://master:7077"
+
+  # -----[ worker_02 ]------------------------------------------------------------------------------
+  worker_02:
+    image: bde2020/spark-worker
+    container_name: spark_worker_02
+    restart: always
+    depends_on:
+      - master
+    hostname: spark.worker.02
+    networks:
+      - datalake
+    ports:
+      - 8082:8082
+    environment:
+      - SPARK_MASTER=spark://master:7077
+      - SPARK_WORKER_WEBUI_PORT=8082
+
+networks:
+  datalake:
+    external: true
