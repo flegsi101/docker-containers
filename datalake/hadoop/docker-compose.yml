@@ -6,6 +6,7 @@ services:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
     restart: always
+    hostname: hadoop.namenode
     networks:
       - datalake
     hostname: namenode
@@ -24,7 +25,11 @@ services:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode_01
     restart: always
+<<<<<<< HEAD
     hostname: datanode01
+=======
+    hostname: hadoop.datanode.01
+>>>>>>> a63907bf5be22b0dc9368a465efe6627c1de3d72
     networks:
       - datalake
     ports:
@@ -40,6 +45,7 @@ services:
   datanode_02:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode_02
+    hostname: hadoop.datanode.02
     restart: always
     hostname: datanode02
     networks:
@@ -59,7 +65,11 @@ services:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
     restart: always
+<<<<<<< HEAD
     hostname: resourcemanager
+=======
+    hostname: hadoop.resourcemanager
+>>>>>>> a63907bf5be22b0dc9368a465efe6627c1de3d72
     networks:
       - datalake
     environment:
@@ -72,7 +82,11 @@ services:
     image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
     container_name: nodemanager
     restart: always
+<<<<<<< HEAD
     hostname: nodemanager
+=======
+    hostname: hadoop.nodemanager
+>>>>>>> a63907bf5be22b0dc9368a465efe6627c1de3d72
     networks:
       - datalake
     environment:
@@ -85,7 +99,11 @@ services:
     image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
     container_name: historyserver
     restart: always
+<<<<<<< HEAD
     hostname: historyserver
+=======
+    hostname: hadoop.historyserver
+>>>>>>> a63907bf5be22b0dc9368a465efe6627c1de3d72
     networks:
       - datalake
     volumes:
