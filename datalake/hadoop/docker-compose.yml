@@ -3,11 +3,12 @@ version: "3"
 services:
   # -----[ namende ]--------------------------------------------------------------------------------
   namenode:
-    image: bde2020/hadoop-namenode
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
     restart: always
     networks:
       - datalake
+    hostname: namenode
     ports:
       - 9870:9870
       - 9000:9000
@@ -20,11 +21,14 @@ services:
 
   # -----[ datanode_01 ]----------------------------------------------------------------------------
   datanode_01:
-    image: bde2020/hadoop-datanode
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode_01
     restart: always
+    hostname: datanode01
     networks:
       - datalake
+    ports:
+      - 9864:9864
     volumes:
       - datanode_01:/hadoop/dfs/data
     env_file:
@@ -34,53 +38,60 @@ services:
 
   # -----[ datanode_02 ]----------------------------------------------------------------------------
   datanode_02:
-    image: bde2020/hadoop-datanode
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode_02
     restart: always
+    hostname: datanode02
     networks:
       - datalake
+    ports:
+      - 9964:9964
     volumes:
       - datanode_02:/hadoop/dfs/data
     env_file:
       - ./hadoop.env
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
+      HDFS_CONF_dfs_datanode_http_address: "0.0.0.0:9964"
 
   # -----[ resourcemanager ]------------------------------------------------------------------------
   resourcemanager:
-    image: bde2020/hadoop-resourcemanager
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
     restart: always
+    hostname: resourcemanager
     networks:
       - datalake
     environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode_01:9864 datanode_02:9864"
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode_01:9864 datanode_02:9964"
     env_file:
       - ./hadoop.env
 
   # -----[ nodemanager ]----------------------------------------------------------------------------
   nodemanager:
-    image: bde2020/hadoop-nodemanager
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
     container_name: nodemanager
     restart: always
+    hostname: nodemanager
     networks:
       - datalake
     environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode_01:9864 datanode_02:9864 resourcemanager:8088"
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode_01:9864 datanode_02:9964 resourcemanager:8088"
     env_file:
       - ./hadoop.env
 
   # -----[ historyserver ]--------------------------------------------------------------------------
   historyserver:
-    image: bde2020/hadoop-historyserver
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
     container_name: historyserver
     restart: always
+    hostname: historyserver
     networks:
       - datalake
     volumes:
-      - hadoop_historyserver:/hadoop/yarn/timeline
+      - historyserver:/hadoop/yarn/timeline
     environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode_01:9864 datanode_02:9864 resourcemanager:8088"
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode_01:9864 datanode_02:9964 resourcemanager:8088"
     env_file:
       - ./hadoop.env
 
@@ -88,7 +99,7 @@ volumes:
   namenode:
   datanode_01:
   datanode_02:
-  hadoop_historyserver:
+  historyserver:
 
 networks:
   datalake:
