@@ -6,6 +6,7 @@ services:
     image: bde2020/hadoop-namenode
     container_name: namenode
     restart: always
+    hostname: hadoop.namenode
     networks:
       - datalake
     ports:
@@ -23,6 +24,7 @@ services:
     image: bde2020/hadoop-datanode
     container_name: datanode_01
     restart: always
+    hostname: hadoop.datanode.01
     networks:
       - datalake
     volumes:
@@ -36,6 +38,7 @@ services:
   datanode_02:
     image: bde2020/hadoop-datanode
     container_name: datanode_02
+    hostname: hadoop.datanode.02
     restart: always
     networks:
       - datalake
@@ -51,6 +54,7 @@ services:
     image: bde2020/hadoop-resourcemanager
     container_name: resourcemanager
     restart: always
+    hostname: hadoop.resourcemanager
     networks:
       - datalake
     environment:
@@ -63,6 +67,7 @@ services:
     image: bde2020/hadoop-nodemanager
     container_name: nodemanager
     restart: always
+    hostname: hadoop.nodemanager
     networks:
       - datalake
     environment:
@@ -75,6 +80,7 @@ services:
     image: bde2020/hadoop-historyserver
     container_name: historyserver
     restart: always
+    hostname: hadoop.historyserver
     networks:
       - datalake
     volumes:
