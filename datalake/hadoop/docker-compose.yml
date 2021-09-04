@@ -30,12 +30,16 @@ services:
       - datalake
     ports:
       - 9864:9864
+      - 9866:9866
     volumes:
       - datanode_01:/hadoop/dfs/data
     env_file:
       - ./hadoop.env
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
+      HDFS_CONF_dfs_datanode_http_address: "datanode01:9864"
+      HDFS_CONF_dfs_datanode_address: "datanode01:9866"
+      HDFS_CONF_dfs_datanode_address: "datanode01:9866"
 
   # -----[ datanode_02 ]----------------------------------------------------------------------------
   datanode_02:
@@ -48,13 +52,15 @@ services:
       - datalake
     ports:
       - 9964:9964
+      - 9966:9966
     volumes:
       - datanode_02:/hadoop/dfs/data
     env_file:
       - ./hadoop.env
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
-      HDFS_CONF_dfs_datanode_http_address: "0.0.0.0:9964"
+      HDFS_CONF_dfs_datanode_http_address: "datanode02:9964"
+      HDFS_CONF_dfs_datanode_address: "datanode02:9966"
 
   # -----[ resourcemanager ]------------------------------------------------------------------------
   resourcemanager:
